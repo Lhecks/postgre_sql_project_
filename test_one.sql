@@ -203,4 +203,67 @@ FROM job_skills_for_remote
 INNER JOIN skills_dim AS skills ON skills.skill_id = job_skills_for_remote.skill_id
 ORDER BY 
     skill_count DESC
-LIMIT 20
+LIMIT 10
+
+-- Fetching the data from the months database using UNION/ UNION ALL
+SELECT
+    company_id,
+    job_title_short,
+    job_location
+    
+FROM
+    february_jobs
+UNION
+SELECT
+    company_id,
+    job_title_short,
+    job_location
+FROM
+    march_jobs
+UNION
+SELECT
+    company_id,
+    job_title_short,
+    job_location
+FROM
+    october_jobs
+UNION
+SELECT
+    company_id,
+    job_title_short,
+    job_location
+FROM
+    december_jobs
+
+-- Fetching the data from the months database using UNION ALL throught subqueries
+
+SELECT 
+    months.job_location,
+    months.job_via,
+    job_title_short,
+    months.job_posted_date:: DATE,
+    months.salary_year_avg
+FROM (
+    SELECT *
+    FROM
+        february_jobs
+    UNION ALL
+    SELECT *
+    FROM
+        march_jobs
+    UNION ALL
+    SELECT *
+    FROM
+        october_jobs
+    UNION ALL
+    SELECT *
+    FROM
+        december_jobs
+) AS months
+WHERE
+(  months.salary_year_avg > 80000 AND 
+   months.job_title_short = 'Data Analyst') AND
+   months.job_location IS NOT NULL
+ORDER BY salary_year_avg DESC
+
+
